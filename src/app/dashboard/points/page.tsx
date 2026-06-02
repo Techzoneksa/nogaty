@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Coins, Sparkles, AlertCircle, Save, CheckCircle2 } from "lucide-react";
+/* lucide-react removed - using inline SVGs */
+
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -43,7 +44,7 @@ export default function PointsSettingsPage() {
       {/* Toast Notice */}
       {showToast && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white text-xs font-bold py-3 px-6 rounded-2xl shadow-xl z-50 flex items-center gap-2 border border-emerald-500 animate-slideDown">
-          <CheckCircle2 size={16} />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <span>تم حفظ إعدادات نظام النقاط بنجاح!</span>
         </div>
       )}
@@ -59,7 +60,7 @@ export default function PointsSettingsPage() {
             size="sm"
             onClick={handleSave}
             isLoading={isLoading}
-            icon={<Save size={16} />}
+            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>}
           >
             حفظ التغييرات
           </Button>
@@ -72,7 +73,7 @@ export default function PointsSettingsPage() {
           {/* Section 1: Core Rules */}
           <Card className="bg-white flex flex-col gap-5 p-6">
             <div className="flex items-center gap-2 border-b border-border-base pb-3">
-              <Coins size={18} className="text-primary" />
+              <svg className="w-[18px] h-[18px] text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <h3 className="text-sm font-bold text-text-primary">القواعد الأساسية لاكتساب واسترداد النقاط</h3>
             </div>
 
@@ -116,7 +117,7 @@ export default function PointsSettingsPage() {
             </div>
 
             <div className="flex items-start gap-2 bg-primary-light/30 border border-primary/20 p-3.5 rounded-xl mt-1">
-              <AlertCircle size={16} className="text-primary shrink-0 mt-0.5" />
+              <svg className="w-4 h-4 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
               <div className="flex flex-col text-right gap-0.5">
                 <span className="text-[11px] font-bold text-text-primary">حسبة استرداد النقاط المبسطة:</span>
                 <span className="text-[10px] text-text-secondary leading-relaxed">
@@ -129,7 +130,7 @@ export default function PointsSettingsPage() {
           {/* Section 2: Bonuses */}
           <Card className="bg-white flex flex-col gap-5 p-6">
             <div className="flex items-center gap-2 border-b border-border-base pb-3">
-              <Sparkles size={18} className="text-secondary" />
+              <svg className="w-[18px] h-[18px] text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
               <h3 className="text-sm font-bold text-text-primary">الهدايا الترحيبية والمناسبات</h3>
             </div>
 

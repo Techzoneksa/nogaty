@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Filter, Phone, User, Store, ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -142,7 +141,7 @@ export default function CustomersPage() {
             variant="primary"
             size="sm"
             onClick={() => setIsAddModalOpen(true)}
-            icon={<Plus size={16} />}
+            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}
           >
             إضافة عميل جديد
           </Button>
@@ -154,7 +153,7 @@ export default function CustomersPage() {
         {/* Search */}
         <div className="relative w-full md:w-80">
           <span className="absolute right-3 top-2.5 text-text-secondary pointer-events-none">
-            <Search size={16} />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </span>
           <input
             type="text"
@@ -256,7 +255,7 @@ export default function CustomersPage() {
             placeholder="مثال: صالح بن محمد"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            icon={<User size={16} />}
+            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>}
             required
           />
           <Input
@@ -264,7 +263,7 @@ export default function CustomersPage() {
             placeholder="05xxxxxxxx"
             value={newPhone}
             onChange={(e) => setNewPhone(e.target.value)}
-            icon={<Phone size={16} />}
+            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>}
             required
           />
           <div className="grid grid-cols-2 gap-4">

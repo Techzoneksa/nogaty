@@ -2,18 +2,6 @@
 
 import React, { useState, use } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Coins,
-  Gift,
-  Megaphone,
-  Plus,
-  Minus,
-  MapPin,
-  Calendar,
-  Layers,
-  Sparkles,
-} from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -109,9 +97,9 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
   };
 
   const tabs = [
-    { id: "points_log", label: "سجل النقاط", icon: <Coins size={16} /> },
-    { id: "rewards", label: "المكافآت المستبدلة", icon: <Gift size={16} /> },
-    { id: "campaigns", label: "الحملات المستلمة", icon: <Megaphone size={16} /> },
+    { id: "points_log", label: "سجل النقاط", icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
+    { id: "rewards", label: "المكافآت المستبدلة", icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2a2 2 0 112 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2z" /></svg> },
+    { id: "campaigns", label: "الحملات المستلمة", icon: <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-2.148a6 6 0 01-1.724-4.564l-.533-1.114a5 5 0 01-.65-3.57l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 0110.89 3.5 5 5 0 0116 6.35l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5V6.34l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 017.5 13l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5" /></svg> },
   ];
 
   const tierVariants: Record<string, string> = { Bronze: "neutral", Silver: "secondary", Gold: "accent", VIP: "danger" };
@@ -124,7 +112,7 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
           href="/dashboard/customers"
           className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary font-bold transition-colors"
         >
-          <ArrowRight size={14} />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
           <span>العودة لجدول العملاء</span>
         </Link>
       </div>
@@ -143,7 +131,7 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
                 setPointsAction("deduct");
                 setIsPointsModalOpen(true);
               }}
-              icon={<Minus size={14} />}
+              icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>}
             >
               خصم نقاط
             </Button>
@@ -154,7 +142,7 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
                 setPointsAction("add");
                 setIsPointsModalOpen(true);
               }}
-              icon={<Plus size={14} />}
+              icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>}
             >
               شحن نقاط
             </Button>
@@ -185,7 +173,9 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
             
             <div className="bg-bg-base/70 border border-border-base p-4 rounded-2xl flex items-center gap-4 w-full sm:w-auto">
               <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary">
-                <Coins size={20} />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
               <div className="flex flex-col text-right">
                 <span className="text-2xl font-black text-primary">{currentPoints}</span>
@@ -198,14 +188,14 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] text-text-secondary font-medium">الفرع المفضل</span>
               <div className="flex items-center gap-1 text-xs font-bold text-text-primary mt-1">
-                <MapPin size={12} className="text-primary" />
+                <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 <span>{customer.branch}</span>
               </div>
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[10px] text-text-secondary font-medium">تاريخ الانضمام</span>
               <div className="flex items-center gap-1 text-xs font-bold text-text-primary mt-1">
-                <Calendar size={12} className="text-primary" />
+                <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 <span>{customer.dateJoined}</span>
               </div>
             </div>

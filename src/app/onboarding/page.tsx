@@ -2,16 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Store,
-  MapPin,
-  Coins,
-  Gift,
-  Eye,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { Button } from "@/components/Button";
@@ -55,11 +45,11 @@ export default function OnboardingPage() {
   };
 
   const stepsInfo = [
-    { num: 1, title: "هوية النشاط", icon: Store },
-    { num: 2, title: "الفرع الأول", icon: MapPin },
-    { num: 3, title: "نظام النقاط", icon: Coins },
-    { num: 4, title: "المكافأة الأولى", icon: Gift },
-    { num: 5, title: "معاينة البطاقة", icon: Eye },
+    { num: 1, title: "هوية النشاط" },
+    { num: 2, title: "الفرع الأول" },
+    { num: 3, title: "نظام النقاط" },
+    { num: 4, title: "المكافأة الأولى" },
+    { num: 5, title: "معاينة البطاقة" },
   ];
 
   return (
@@ -81,7 +71,6 @@ export default function OnboardingPage() {
         {/* Progress Stepper */}
         <div className="flex items-center justify-between max-w-2xl mx-auto w-full bg-white border border-border-base rounded-2xl p-4 shadow-xs">
           {stepsInfo.map((s, idx) => {
-            const Icon = s.icon;
             const isCompleted = step > s.num;
             const isActive = step === s.num;
             return (
@@ -103,7 +92,13 @@ export default function OnboardingPage() {
                         : "bg-white border-border-base text-text-secondary"
                     }`}
                   >
-                    {isCompleted ? <Check size={16} /> : <Icon size={16} />}
+                    {isCompleted ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      s.num
+                    )}
                   </div>
                   <span
                     className={`text-[10px] font-bold ${
@@ -246,7 +241,9 @@ export default function OnboardingPage() {
               {step === 5 && (
                 <div className="flex flex-col gap-4 text-right">
                   <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
-                    <Check size={18} />
+                    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                     <span className="text-xs font-bold">كل شيء جاهز للبدء!</span>
                   </div>
                   <p className="text-xs text-text-secondary leading-relaxed">
@@ -262,7 +259,11 @@ export default function OnboardingPage() {
                   size="md"
                   onClick={handlePrev}
                   disabled={step === 1}
-                  icon={<ChevronRight size={16} />}
+                  icon={
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  }
                 >
                   السابق
                 </Button>
@@ -271,7 +272,17 @@ export default function OnboardingPage() {
                   size="md"
                   onClick={handleNext}
                   className="flex-row-reverse"
-                  icon={step === totalSteps ? <Check size={16} /> : <ChevronLeft size={16} />}
+                  icon={
+                    step === totalSteps ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    )
+                  }
                 >
                   {step === totalSteps ? "إنهاء وتفعيل برنامج الولاء" : "التالي ومتابعة"}
                 </Button>

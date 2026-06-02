@@ -1,18 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Users,
-  Coins,
-  Gift,
-  Megaphone,
-  MapPin,
-  RefreshCw,
-  Sparkles,
-  ArrowUpRight,
-  UserCheck,
-  TrendingUp,
-} from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
@@ -37,14 +25,14 @@ export default function DashboardHomePage() {
   const dashboardData: Record<string, any> = {
     cafe_noqta: {
       kpis: [
-        { title: "إجمالي العملاء", value: "1,420", icon: <Users size={20} />, trend: { value: "+12%", isPositive: true }, color: "primary" },
-        { title: "العملاء النشطون", value: "890", icon: <UserCheck size={20} />, trend: { value: "+8%", isPositive: true }, color: "secondary" },
-        { title: "النقاط المصدرة", value: "42,500", icon: <Coins size={20} />, trend: { value: "+15%", isPositive: true }, color: "accent" },
-        { title: "النقاط المستبدلة", value: "28,900", icon: <RefreshCw size={20} />, trend: { value: "+22%", isPositive: true }, color: "primary" },
-        { title: "المكافآت المستبدلة", value: "320", icon: <Gift size={20} />, trend: { value: "+10%", isPositive: true }, color: "secondary" },
-        { title: "الحملات المرسلة", value: "8", icon: <Megaphone size={20} />, trend: { value: "0%", isPositive: true }, color: "accent" },
-        { title: "معدل تكرار الشراء", value: "64%", icon: <TrendingUp size={20} />, trend: { value: "+4%", isPositive: true }, color: "primary" },
-        { title: "الفروع النشطة", value: "2", icon: <MapPin size={20} />, trend: { value: "0%", isPositive: true }, color: "secondary" },
+        { title: "إجمالي العملاء", value: "1,420", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>, trend: { value: "+12%", isPositive: true }, color: "primary" },
+        { title: "العملاء النشطون", value: "890", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+8%", isPositive: true }, color: "secondary" },
+        { title: "النقاط المصدرة", value: "42,500", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+15%", isPositive: true }, color: "accent" },
+        { title: "النقاط المستبدلة", value: "28,900", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>, trend: { value: "+22%", isPositive: true }, color: "primary" },
+        { title: "المكافآت المستبدلة", value: "320", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2a2 2 0 112 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2z" /></svg>, trend: { value: "+10%", isPositive: true }, color: "secondary" },
+        { title: "الحملات المرسلة", value: "8", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-2.148a6 6 0 01-1.724-4.564l-.533-1.114a5 5 0 01-.65-3.57l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 0110.89 3.5 5 5 0 0116 6.35l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 016.35 16.5l-.336.89a5 5 0 01-1.056 1.402l-.336.89a5 5 0 01-1.056 1.402l-.336.89A5 5 0 013.5 21.5V6.34l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 017.5 13l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5" /></svg>, trend: { value: "0%", isPositive: true }, color: "accent" },
+        { title: "معدل تكرار الشراء", value: "64%", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v-8m0 8v-8m-8 8h8m0 0v-8m0 8v-8" /></svg>, trend: { value: "+4%", isPositive: true }, color: "primary" },
+        { title: "الفروع النشطة", value: "2", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, trend: { value: "0%", isPositive: true }, color: "secondary" },
       ],
       recentCustomers: [
         { name: "سعيد القحطاني", phone: "050****412", points: 240, tier: "Gold", date: "منذ 5 دقائق" },
@@ -65,14 +53,14 @@ export default function DashboardHomePage() {
     },
     restaurant_mazaq: {
       kpis: [
-        { title: "إجمالي العملاء", value: "3,850", icon: <Users size={20} />, trend: { value: "+18%", isPositive: true }, color: "primary" },
-        { title: "العملاء النشطون", value: "2,100", icon: <UserCheck size={20} />, trend: { value: "+14%", isPositive: true }, color: "secondary" },
-        { title: "النقاط المصدرة", value: "112,000", icon: <Coins size={20} />, trend: { value: "+28%", isPositive: true }, color: "accent" },
-        { title: "النقاط المستبدلة", value: "74,500", icon: <RefreshCw size={20} />, trend: { value: "+30%", isPositive: true }, color: "primary" },
-        { title: "المكافآت المستبدلة", value: "610", icon: <Gift size={20} />, trend: { value: "+15%", isPositive: true }, color: "secondary" },
-        { title: "الحملات المرسلة", value: "12", icon: <Megaphone size={20} />, trend: { value: "+2", isPositive: true }, color: "accent" },
-        { title: "معدل تكرار الشراء", value: "52%", icon: <TrendingUp size={20} />, trend: { value: "+1%", isPositive: true }, color: "primary" },
-        { title: "الفروع النشطة", value: "3", icon: <MapPin size={20} />, trend: { value: "+1", isPositive: true }, color: "secondary" },
+        { title: "إجمالي العملاء", value: "3,850", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>, trend: { value: "+18%", isPositive: true }, color: "primary" },
+        { title: "العملاء النشطون", value: "2,100", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+14%", isPositive: true }, color: "secondary" },
+        { title: "النقاط المصدرة", value: "112,000", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+28%", isPositive: true }, color: "accent" },
+        { title: "النقاط المستبدلة", value: "74,500", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>, trend: { value: "+30%", isPositive: true }, color: "primary" },
+        { title: "المكافآت المستبدلة", value: "610", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2a2 2 0 112 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2z" /></svg>, trend: { value: "+15%", isPositive: true }, color: "secondary" },
+        { title: "الحملات المرسلة", value: "12", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-2.148a6 6 0 01-1.724-4.564l-.533-1.114a5 5 0 01-.65-3.57l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 0110.89 3.5 5 5 0 0116 6.35l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5V6.34l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 017.5 13l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5" /></svg>, trend: { value: "+2", isPositive: true }, color: "accent" },
+        { title: "معدل تكرار الشراء", value: "52%", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v-8m0 8v-8m-8 8h8m0 0v-8m0 8v-8" /></svg>, trend: { value: "+1%", isPositive: true }, color: "primary" },
+        { title: "الفروع النشطة", value: "3", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, trend: { value: "+1", isPositive: true }, color: "secondary" },
       ],
       recentCustomers: [
         { name: "علي الشمري", phone: "055****219", points: 890, tier: "VIP", date: "منذ دقيقتين" },
@@ -93,14 +81,14 @@ export default function DashboardHomePage() {
     },
     supermarket_hay: {
       kpis: [
-        { title: "إجمالي العملاء", value: "8,900", icon: <Users size={20} />, trend: { value: "+25%", isPositive: true }, color: "primary" },
-        { title: "العملاء النشطون", value: "6,400", icon: <UserCheck size={20} />, trend: { value: "+21%", isPositive: true }, color: "secondary" },
-        { title: "النقاط المصدرة", value: "520,000", icon: <Coins size={20} />, trend: { value: "+35%", isPositive: true }, color: "accent" },
-        { title: "النقاط المستبدلة", value: "410,000", icon: <RefreshCw size={20} />, trend: { value: "+40%", isPositive: true }, color: "primary" },
-        { title: "المكافآت المستبدلة", value: "1,240", icon: <Gift size={20} />, trend: { value: "+18%", isPositive: true }, color: "secondary" },
-        { title: "الحملات المرسلة", value: "15", icon: <Megaphone size={20} />, trend: { value: "+3", isPositive: true }, color: "accent" },
-        { title: "معدل تكرار الشراء", value: "78%", icon: <TrendingUp size={20} />, trend: { value: "+6%", isPositive: true }, color: "primary" },
-        { title: "الفروع النشطة", value: "4", icon: <MapPin size={20} />, trend: { value: "0%", isPositive: true }, color: "secondary" },
+        { title: "إجمالي العملاء", value: "8,900", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>, trend: { value: "+25%", isPositive: true }, color: "primary" },
+        { title: "العملاء النشطون", value: "6,400", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+21%", isPositive: true }, color: "secondary" },
+        { title: "النقاط المصدرة", value: "520,000", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, trend: { value: "+35%", isPositive: true }, color: "accent" },
+        { title: "النقاط المستبدلة", value: "410,000", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>, trend: { value: "+40%", isPositive: true }, color: "primary" },
+        { title: "المكافآت المستبدلة", value: "1,240", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2a2 2 0 112 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 012-2z" /></svg>, trend: { value: "+18%", isPositive: true }, color: "secondary" },
+        { title: "الحملات المرسلة", value: "15", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-2.148a6 6 0 01-1.724-4.564l-.533-1.114a5 5 0 01-.65-3.57l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 0110.89 3.5 5 5 0 0116 6.35l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5V6.34l.336-.89a5 5 0 011.056-1.402l.336-.89a5 5 0 011.056-1.402l.336-.89A5 5 0 017.5 13l.336.89a5 5 0 01.65 3.57l-.533 1.114a6 6 0 01-1.724 4.564l2.147 2.148a1.76 1.76 0 010 2.348l-2.147 2.148a6 6 0 01-1.724 4.564l-.533 1.114a5 5 0 01-.65 3.57l-.336.89A5 5 0 013 21.5" /></svg>, trend: { value: "+3", isPositive: true }, color: "accent" },
+        { title: "معدل تكرار الشراء", value: "78%", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v-8m0 8v-8m-8 8h8m0 0v-8m0 8v-8" /></svg>, trend: { value: "+6%", isPositive: true }, color: "primary" },
+        { title: "الفروع النشطة", value: "4", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>, trend: { value: "0%", isPositive: true }, color: "secondary" },
       ],
       recentCustomers: [
         { name: "عبد الرحمن المطيري", phone: "054****654", points: 1540, tier: "VIP", date: "منذ دقيقة" },
@@ -129,7 +117,9 @@ export default function DashboardHomePage() {
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary shrink-0">
-            <Sparkles size={20} className="animate-pulse" />
+            <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
           </div>
           <div className="flex flex-col text-right">
             <h4 className="text-xs font-bold text-text-primary">مستعد للربط والتكامل التقني لاحقاً!</h4>
@@ -177,7 +167,9 @@ export default function DashboardHomePage() {
             </div>
             <Badge variant="success">
               <span className="flex items-center gap-1 font-bold text-[9px]">
-                <ArrowUpRight size={10} />
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
+                </svg>
                 <span>+24% نمو متزايد</span>
               </span>
             </Badge>
