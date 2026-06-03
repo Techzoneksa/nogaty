@@ -3,8 +3,14 @@
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
+import { useMemo } from "react";
 
 export default function BarcodePage() {
+  const barcodePattern = useMemo(() =>
+    Array.from({ length: 25 }).map(() => Math.random() > 0.4),
+    []
+  );
+
   return (
     <div className="min-h-screen bg-bg-base pb-20">
       <div className="bg-gradient-to-br from-primary via-primary-light to-secondary px-6 pt-12 pb-16 rounded-b-3xl">
@@ -32,12 +38,10 @@ export default function BarcodePage() {
             <div className="w-64 h-64 bg-white p-4 rounded-2xl shadow-inner border-4 border-border-base">
               <div className="w-full h-full bg-gradient-to-br from-text-primary to-text-secondary rounded-lg flex items-center justify-center">
                 <div className="grid grid-cols-5 gap-1">
-                  {Array.from({ length: 25 }).map((_, i) => (
+                  {barcodePattern.map((filled, i) => (
                     <div
                       key={i}
-                      className={`w-3 h-3 ${
-                        Math.random() > 0.4 ? "bg-white" : "bg-transparent"
-                      }`}
+                      className={`w-3 h-3 ${filled ? "bg-white" : "bg-transparent"}`}
                     />
                   ))}
                 </div>
