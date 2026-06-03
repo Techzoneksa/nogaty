@@ -1,0 +1,352 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  MERCHANT_OWNER
+  MERCHANT_STAFF
+  CUSTOMER
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+  CANCELLED
+}
+
+enum BusinessType {
+  RESTAURANT
+  CAFE
+  SUPERMARKET
+  RETAIL
+  SALON
+  PHARMACY
+  OTHER
+}
+
+enum BranchStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum PointTransactionType {
+  EARN
+  REDEEM
+  ADJUST
+  EXPIRE
+}
+
+enum RewardType {
+  FIXED_DISCOUNT
+  PERCENTAGE_DISCOUNT
+  FREE_ITEM
+  CUSTOM
+}
+
+enum RewardStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum RewardRedemptionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum CampaignType {
+  PROMOTION
+  NEWSLETTER
+  WELCOME
+  BIRTHDAY
+  RE_ENGAGEMENT
+}
+
+enum CampaignChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+  IN_APP
+  MANUAL
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  FAILED
+  PAUSED
+}
+
+enum IntegrationProvider {
+  POS
+  SALLA
+  ZID
+  WHATSAPP
+  SMS
+  EMAIL
+  SHOPIFY
+  WOOCOMMERCE
+}
+
+enum IntegrationStatus {
+  NOT_CONNECTED
+  CONNECTED
+  ERROR
+  DISABLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  password  String
+  role      UserRole @default(MERCHANT_STAFF)
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([tenantId])
+}
+
+model Tenant {
+  id              String         @id @default(cuid())
+  name            String
+  slug            String         @unique
+  businessType    BusinessType   @default(OTHER)
+  logoUrl         String?
+  primaryColor    String         @default("#2563EB")
+  secondaryColor  String         @default("#1E40AF")
+  status          TenantStatus   @default(PENDING)
+  planId          String?
+  plan            Plan?          @relation(fields: [planId], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  branches        Branch[]
+  customers       Customer[]
+  loyaltyRules    LoyaltyRule[]
+  pointTx         PointTransaction[]
+  rewards         Reward[]
+  rewardRedemptions RewardRedemption[]
+  campaigns       Campaign[]
+  subscriptions   Subscription[]
+  integrations    Integration[]
+  users           User[]
+
+  @@index([slug])
+  @@index([status])
+}
+
+model Branch {
+  id        String       @id @default(cuid())
+  tenantId  String
+  tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name      String
+  city      String
+  district  String?
+  address   String?
+  phone     String?
+  status    BranchStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  pointTx     PointTransaction[]
+  redemptions RewardRedemption[]
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+model Customer {
+  id          String         @id @default(cuid())
+  tenantId    String
+  tenant      Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  phone       String
+  email       String?
+  birthDate   DateTime?
+  status      CustomerStatus @default(ACTIVE)
+  totalPoints Int            @default(0)
+  totalVisits Int            @default(0)
+  lastVisitAt DateTime?
+  cardNumber  String         @unique @default(cuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  pointTx     PointTransaction[]
+  redemptions RewardRedemption[]
+
+  @@index([tenantId])
+  @@index([phone])
+  @@index([cardNumber])
+}
+
+model LoyaltyRule {
+  id                String   @id @default(cuid())
+  tenantId          String   @unique
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  pointsPerCurrency Float    @default(1)
+  currencyPerPoint  Float    @default(0.1)
+  minimumPurchase   Float    @default(1)
+  welcomePoints     Int      @default(0)
+  pointsExpiryDays  Int      @default(365)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model PointTransaction {
+  id            String               @id @default(cuid())
+  tenantId      String
+  tenant        Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      Customer             @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  branchId      String?
+  branch        Branch?              @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  type          PointTransactionType
+  points        Int
+  amount        Float?
+  description   String
+  referenceType String?
+  referenceId   String?
+  createdAt     DateTime             @default(now())
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([branchId])
+  @@index([createdAt])
+}
+
+model Reward {
+  id          String       @id @default(cuid())
+  tenantId    String
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  rewardType  RewardType   @default(FIXED_DISCOUNT)
+  pointsCost Int
+  value       Float
+  status      RewardStatus @default(ACTIVE)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  redemptions RewardRedemption[]
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+model RewardRedemption {
+  id         String                 @id @default(cuid())
+  tenantId   String
+  tenant     Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer               @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  rewardId   String
+  reward     Reward                 @relation(fields: [rewardId], references: [id], onDelete: Cascade)
+  branchId   String?
+  branch     Branch?                @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  pointsUsed Int
+  status     RewardRedemptionStatus @default(PENDING)
+  redeemedAt DateTime?
+  createdAt  DateTime               @default(now())
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([rewardId])
+}
+
+model Campaign {
+  id             String          @id @default(cuid())
+  tenantId       String
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name           String
+  type           CampaignType    @default(PROMOTION)
+  channel        CampaignChannel @default(WHATSAPP)
+  status         CampaignStatus  @default(DRAFT)
+  message        String
+  targetSegment  String?
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+model Plan {
+  id              String   @id @default(cuid())
+  name            String
+  priceMonthly    Float    @default(0)
+  priceYearly     Float    @default(0)
+  customerLimit   Int      @default(100)
+  branchLimit     Int      @default(1)
+  features        String   @default("[]")
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenants        Tenant[]
+  subscriptions  Subscription[]
+
+  @@index([isActive])
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  tenantId  String
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  planId    String
+  plan      Plan               @relation(fields: [planId], references: [id])
+  status    SubscriptionStatus  @default(ACTIVE)
+  startsAt  DateTime           @default(now())
+  endsAt    DateTime?
+  renewsAt  DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+model Integration {
+  id        String             @id @default(cuid())
+  tenantId  String
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  provider  IntegrationProvider
+  status    IntegrationStatus  @default(NOT_CONNECTED)
+  config    String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([tenantId])
+  @@index([provider])
+}
