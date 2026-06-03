@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
     }
 
     if (
-      (pathname.startsWith("/merchant")) &&
+      (pathname.startsWith("/merchant") || pathname.startsWith("/dashboard")) &&
       session.role !== UserRole.MERCHANT_OWNER &&
       session.role !== UserRole.MERCHANT_STAFF
     ) {
@@ -82,6 +82,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/merchant/:path*",
+    "/dashboard/:path*",
     "/my-points/:path*",
     "/auth/:path*",
   ],
