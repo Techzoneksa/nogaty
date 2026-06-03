@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { PageHeader } from "@/components/PageHeader";
 import { useTranslation } from "@/lib/i18n/useTranslation";
+
+interface LoyaltyRules {
+  pointsPerRiyal: number;
+  minimumRedeem: number;
+  pointValue: number;
+  allowRedemption: boolean;
+  welcomePoints: number;
+}
 
 export default function RulesPage() {
   const { t } = useTranslation();
@@ -14,23 +22,105 @@ export default function RulesPage() {
   const [pointValue, setPointValue] = useState("0.1");
   const [allowRedemption, setAllowRedemption] = useState(true);
   const [welcomePoints, setWelcomePoints] = useState("50");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSave = () => {
-    console.log({
-      pointsPerRiyal,
-      minimumRedeem,
-      pointValue,
-      allowRedemption,
-      welcomePoints,
-    });
+  const fetchRules = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/merchant/rules");
+      if (response.ok) {
+        const data = await response.json();
+        const rules = data.rules as LoyaltyRules;
+        setPointsPerRiyal(rules.pointsPerRiyal?.toString() || "1");
+        setMinimumRedeem(rules.minimumRedeem?.toString() || "10");
+        setPointValue(rules.pointValue?.toString() || "0.1");
+        setAllowRedemption(rules.allowRedemption ?? true);
+        setWelcomePoints(rules.welcomePoints?.toString() || "50");
+      } else {
+        const data = await response.json();
+        setError(data.error || "Failed to load rules");
+      }
+    } catch {
+      setError("Failed to load rules");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRules();
+  }, [fetchRules]);
+
+  const hasNegativeValue = () => {
+    return (
+      parseFloat(pointsPerRiyal) < 0 ||
+      parseFloat(minimumRedeem) < 0 ||
+      parseFloat(pointValue) < 0 ||
+      parseFloat(welcomePoints) < 0
+    );
   };
+
+  const handleSave = async () => {
+    if (hasNegativeValue()) {
+      setError(t("merchant.negativeValueError") || "Negative values not allowed");
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await fetch("/api/merchant/rules", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pointsPerRiyal: parseFloat(pointsPerRiyal),
+          minimumRedeem: parseFloat(minimumRedeem),
+          pointValue: parseFloat(pointValue),
+          allowRedemption,
+          welcomePoints: parseFloat(welcomePoints),
+        }),
+      });
+
+      if (response.ok) {
+        setSuccess(t("merchant.rulesSavedSuccess") || "Rules saved successfully");
+      } else {
+        const data = await response.json();
+        setError(data.error || t("merchant.rulesSaveError") || "Failed to save rules");
+      }
+    } catch {
+      setError(t("merchant.rulesSaveError") || "Failed to save rules. Try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6 select-none animate-fadeIn">
+        <PageHeader
+          title={t("merchant.rulesTitle") || "قواعد النقاط"}
+          description={t("merchant.rulesDesc") || "إعداد قواعد نظام النقاط لبرنامج الولاء الخاص بك."}
+          breadcrumbs={[t("merchant.brand") || "كافيه نقطة", t("merchant.settings") || "الإعدادات", t("merchant.rules") || "قواعد النقاط"]}
+        />
+        <Card className="flex items-center justify-center p-12">
+          <span className="text-text-secondary">{t("common.loading") || "جاري التحميل..."}</span>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 select-none animate-fadeIn">
       <PageHeader
-        title="قواعد النقاط"
-        description="إعداد قواعد نظام النقاط لبرنامج الولاء الخاص بك."
-        breadcrumbs={["كافيه نقطة", "الإعدادات", "قواعد النقاط"]}
+        title={t("merchant.rulesTitle") || "قواعد النقاط"}
+        description={t("merchant.rulesDesc") || "إعداد قواعد نظام النقاط لبرنامج الولاء الخاص بك."}
+        breadcrumbs={[t("merchant.brand") || "كافيه نقطة", t("merchant.settings") || "الإعدادات", t("merchant.rules") || "قواعد النقاط"]}
       />
 
       <Card className="flex flex-col gap-6">
@@ -41,18 +131,19 @@ export default function RulesPage() {
             </svg>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-text-primary">قواعد كسب النقاط</span>
-            <span className="text-xs text-text-secondary">حدد كم نقطة يكسبها العميل لكل ريال</span>
+            <span className="text-sm font-bold text-text-primary">{t("merchant.pointsRules") || "قواعد كسب النقاط"}</span>
+            <span className="text-xs text-text-secondary">{t("merchant.pointsPerRiyalHint") || "حدد كم نقطة يكسبها العميل لكل ريال"}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="النقاط لكل ريال"
+            label={t("merchant.pointsPerRiyal") || "النقاط لكل ريال"}
             type="number"
             value={pointsPerRiyal}
             onChange={(e) => setPointsPerRiyal(e.target.value)}
-            helperText="1 نقطة لكل 1 ريال يعني أن العميل يكسب نقطة واحدة عن كل ريال ينفقه"
+            error={parseFloat(pointsPerRiyal) < 0 ? (t("merchant.negativeValueError") || "لا يمكن إدخال قيمة سالبة") : undefined}
+            helperText={t("merchant.pointsPerRiyalHint") || "1 نقطة لكل 1 ريال يعني أن العميل يكسب نقطة واحدة عن كل ريال ينفقه"}
           />
         </div>
       </Card>
@@ -65,34 +156,35 @@ export default function RulesPage() {
             </svg>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-text-primary">قواعد استبدال النقاط</span>
-            <span className="text-xs text-text-secondary">حدد الحد الأدنى للاستبدال وقيمة النقطة</span>
+            <span className="text-sm font-bold text-text-primary">{t("merchant.rules") || "قواعد استبدال النقاط"}</span>
+            <span className="text-xs text-text-secondary">{t("merchant.pointValueHint") || "حدد الحد الأدنى للاستبدال وقيمة النقطة"}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="الحد الأدنى للاستبدال"
+            label={t("merchant.minRedeem") || "الحد الأدنى للاستبدال"}
             type="number"
             value={minimumRedeem}
             onChange={(e) => setMinimumRedeem(e.target.value)}
-            helperText="الحد الأدنى من النقاط التي يمكن للعميل استبدالها"
+            error={parseFloat(minimumRedeem) < 0 ? (t("merchant.negativeValueError") || "لا يمكن إدخال قيمة سالبة") : undefined}
+            helperText={t("merchant.minRedeem") || "الحد الأدنى من النقاط التي يمكن للعميل استبدالها"}
           />
           <Input
-            label="قيمة النقطة (ريال)"
+            label={t("merchant.pointValue") || "قيمة النقطة (ريال)"}
             type="number"
             value={pointValue}
             onChange={(e) => setPointValue(e.target.value)}
-            helperText="0.1 ريال يعني أن كل 10 نقاط تساوي 1 ريال خصم"
-            disabled
+            error={parseFloat(pointValue) < 0 ? (t("merchant.negativeValueError") || "لا يمكن إدخال قيمة سالبة") : undefined}
+            helperText={t("merchant.pointValueHint") || "0.1 ريال يعني أن كل 10 نقاط تساوي 1 ريال خصم"}
           />
         </div>
 
         <div className="flex items-center justify-between p-4 bg-bg-base rounded-xl">
           <div className="flex items-center gap-3">
             <div className="flex flex-col gap-0.5">
-              <span className="text-sm font-bold text-text-primary">السماح بالاستبدال</span>
-              <span className="text-xs text-text-secondary">تفعيل أو تعطيل إمكانية استبدال النقاط</span>
+              <span className="text-sm font-bold text-text-primary">{t("merchant.allowRedemption") || "السماح بالاستبدال"}</span>
+              <span className="text-xs text-text-secondary">{t("merchant.allowRedemption") || "تفعيل أو تعطيل إمكانية استبدال النقاط"}</span>
             </div>
           </div>
           <button
@@ -119,23 +211,48 @@ export default function RulesPage() {
             </svg>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-text-primary">إعدادات إضافية</span>
-            <span className="text-xs text-text-secondary">إعدادات أخرى لنظام النقاط</span>
+            <span className="text-sm font-bold text-text-primary">{t("merchant.welcomePoints") || "إعدادات إضافية"}</span>
+            <span className="text-xs text-text-secondary">{t("merchant.welcomePoints") || "إعدادات أخرى لنظام النقاط"}</span>
           </div>
         </div>
 
         <Input
-          label="نقاط الترحيب"
+          label={t("merchant.welcomePoints") || "نقاط الترحيب"}
           type="number"
           value={welcomePoints}
           onChange={(e) => setWelcomePoints(e.target.value)}
-          helperText="النقاط التي يحصل عليها العميل عند التسجيل الجديد"
+          error={parseFloat(welcomePoints) < 0 ? (t("merchant.negativeValueError") || "لا يمكن إدخال قيمة سالبة") : undefined}
+          helperText={t("merchant.welcomePoints") || "النقاط التي يحصل عليها العميل عند التسجيل الجديد"}
         />
       </Card>
 
+      {error && (
+        <div className="flex items-center gap-3 p-4 bg-red-50 rounded-xl border border-red-200">
+          <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span className="text-sm font-bold text-red-700">{error}</span>
+        </div>
+      )}
+
+      {success && (
+        <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+          <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span className="text-sm font-bold text-emerald-700">{success}</span>
+        </div>
+      )}
+
       <div className="flex justify-end">
-        <Button variant="primary" size="lg" icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>} onClick={handleSave}>
-          حفظ الإعدادات
+        <Button
+          variant="primary"
+          size="lg"
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>}
+          onClick={handleSave}
+          disabled={isSaving || hasNegativeValue()}
+        >
+          {isSaving ? (t("merchant.savingRules") || "جاري حفظ الإعدادات...") : (t("merchant.saveRules") || "حفظ الإعدادات")}
         </Button>
       </div>
     </div>
