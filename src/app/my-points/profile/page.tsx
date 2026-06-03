@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
@@ -10,6 +11,8 @@ import BottomNav from "@/components/my-points/BottomNav";
 
 export default function ProfilePage() {
   const [notifications, setNotifications] = useState(true);
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   return (
     <div className="min-h-screen bg-bg-base pb-20">
@@ -180,7 +183,23 @@ export default function ProfilePage() {
           </div>
         </Card>
 
-        <Button variant="danger" size="lg" className="w-full">
+        <Button
+          variant="danger"
+          size="lg"
+          className="w-full"
+          onClick={async () => {
+            setIsLoggingOut(true);
+            try {
+              await fetch("/api/auth/logout", { method: "POST" });
+              router.push("/auth/login");
+              router.refresh();
+            } catch {
+              setIsLoggingOut(false);
+            }
+          }}
+          disabled={isLoggingOut}
+          isLoading={isLoggingOut}
+        >
           تسجيل الخروج
         </Button>
       </div>

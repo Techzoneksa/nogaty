@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import LanguageToggle from "@/components/LanguageToggle";
 import { MerchantBottomNav } from "@/components/merchant/BottomNav";
 
@@ -12,6 +12,8 @@ export default function MerchantLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const menuItems = [
     { label: "الرئيسية", path: "/merchant" },
@@ -87,9 +89,20 @@ export default function MerchantLayout({
           <LanguageToggle />
           <Link
             href="/"
-            className="text-[10px] text-primary hover:underline font-bold"
+            onClick={async (e) => {
+              e.preventDefault();
+              setIsLoggingOut(true);
+              try {
+                await fetch("/api/auth/logout", { method: "POST" });
+                router.push("/auth/login");
+                router.refresh();
+              } catch {
+                setIsLoggingOut(false);
+              }
+            }}
+            className="text-[10px] text-primary hover:underline font-bold cursor-pointer disabled:opacity-50"
           >
-            خروج
+            {isLoggingOut ? "جاري..." : "خروج"}
           </Link>
         </div>
       </aside>
