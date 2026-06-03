@@ -6,6 +6,50 @@ import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
 
+interface KPITrend {
+  value: string;
+  isPositive: boolean;
+}
+
+interface KPI {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  trend: KPITrend;
+  color: "primary" | "secondary" | "accent";
+}
+
+interface RecentCustomer {
+  name: string;
+  phone: string;
+  points: number;
+  tier: string;
+  date: string;
+}
+
+interface Transaction {
+  customer: string;
+  type: string;
+  amount: string;
+  detail: string;
+  branch: string;
+  time: string;
+}
+
+interface BestReward {
+  name: string;
+  cost: string;
+  redemptions: number;
+}
+
+interface DashboardBusinessData {
+  kpis: KPI[];
+  recentCustomers: RecentCustomer[];
+  transactions: Transaction[];
+  bestRewards: BestReward[];
+  chartPath: string;
+}
+
 export default function DashboardHomePage() {
   const [business, setBusiness] = useState("cafe_noqta");
 
@@ -21,8 +65,7 @@ export default function DashboardHomePage() {
     };
   }, []);
 
-  // Multi-tenant Mock Data
-  const dashboardData: Record<string, any> = {
+  const dashboardData: Record<string, DashboardBusinessData> = {
     cafe_noqta: {
       kpis: [
         { title: "إجمالي العملاء", value: "1,420", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>, trend: { value: "+12%", isPositive: true }, color: "primary" },
@@ -144,7 +187,7 @@ export default function DashboardHomePage() {
 
       {/* KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {currentData.kpis.map((kpi: any, idx: number) => (
+        {currentData.kpis.map((kpi: KPI, idx: number) => (
           <StatCard
             key={idx}
             title={kpi.title}
@@ -226,7 +269,7 @@ export default function DashboardHomePage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            {currentData.bestRewards.map((reward: any, idx: number) => (
+            {currentData.bestRewards.map((reward: BestReward, idx: number) => (
               <div
                 key={idx}
                 className="flex items-center justify-between p-3 rounded-xl border border-border-base/70 bg-bg-base/30 text-right hover:border-primary/20 transition-all cursor-pointer"
@@ -257,7 +300,7 @@ export default function DashboardHomePage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            {currentData.recentCustomers.map((cust: any, idx: number) => {
+            {currentData.recentCustomers.map((cust: RecentCustomer, idx: number) => {
               const tierColors: Record<string, string> = {
                 Bronze: "primary",
                 Silver: "secondary",
@@ -278,7 +321,7 @@ export default function DashboardHomePage() {
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end gap-0.5 text-xs">
                       <span className="font-extrabold text-text-primary">{cust.points} نقطة</span>
-                      <Badge variant={tierColors[cust.tier] as any} className="text-[8px] py-0 px-1.5 font-bold">
+                      <Badge variant={tierColors[cust.tier] as "primary" | "secondary" | "accent" | "danger"} className="text-[8px] py-0 px-1.5 font-bold">
                         {cust.tier}
                       </Badge>
                     </div>
@@ -300,7 +343,7 @@ export default function DashboardHomePage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            {currentData.transactions.map((tx: any, idx: number) => {
+            {currentData.transactions.map((tx: Transaction, idx: number) => {
               const isEarn = tx.type === "كسب نقاط";
               return (
                 <div key={idx} className="flex items-center justify-between p-3 rounded-xl border border-border-base/40 bg-bg-base/20 hover:bg-bg-base/50 transition-colors">

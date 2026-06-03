@@ -27,33 +27,32 @@ export default function RulesPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const fetchRules = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/merchant/rules");
-      if (response.ok) {
-        const data = await response.json();
-        const rules = data.rules as LoyaltyRules;
-        setPointsPerRiyal(rules.pointsPerRiyal?.toString() || "1");
-        setMinimumRedeem(rules.minimumRedeem?.toString() || "10");
-        setPointValue(rules.pointValue?.toString() || "0.1");
-        setAllowRedemption(rules.allowRedemption ?? true);
-        setWelcomePoints(rules.welcomePoints?.toString() || "50");
-      } else {
-        const data = await response.json();
-        setError(data.error || "Failed to load rules");
-      }
-    } catch {
-      setError("Failed to load rules");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchRules();
-  }, [fetchRules]);
+    const loadRules = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/merchant/rules");
+        if (response.ok) {
+          const data = await response.json();
+          const rules = data.rules as LoyaltyRules;
+          setPointsPerRiyal(rules.pointsPerRiyal?.toString() || "1");
+          setMinimumRedeem(rules.minimumRedeem?.toString() || "10");
+          setPointValue(rules.pointValue?.toString() || "0.1");
+          setAllowRedemption(rules.allowRedemption ?? true);
+          setWelcomePoints(rules.welcomePoints?.toString() || "50");
+        } else {
+          const errData = await response.json();
+          setError(errData.error || "Failed to load rules");
+        }
+      } catch {
+        setError("Failed to load rules");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadRules();
+  }, []);
 
   const hasNegativeValue = () => {
     return (

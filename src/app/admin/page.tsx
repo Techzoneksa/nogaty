@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { StatCard } from '@/components/StatCard';
 import { Badge } from '@/components/Badge';
@@ -29,29 +29,28 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMerchants = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/api/admin/merchants?limit=5');
-      if (response.ok) {
-        const data = await response.json();
-        setMerchants(data.merchants || []);
-        setSummary(data.summary || { total: 0, active: 0, trial: 0, suspended: 0, expired: 0 });
-      } else {
-        const data = await response.json();
-        setError(data.error || t('common.error') || 'Error loading data');
-      }
-    } catch {
-      setError(t('common.error') || 'Failed to load merchants');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [t]);
-
   useEffect(() => {
-    fetchMerchants();
-  }, [fetchMerchants]);
+    const loadMerchants = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/admin/merchants?limit=5');
+        if (response.ok) {
+          const data = await response.json();
+          setMerchants(data.merchants || []);
+          setSummary(data.summary || { total: 0, active: 0, trial: 0, suspended: 0, expired: 0 });
+        } else {
+          const errData = await response.json();
+          setError(errData.error || t('common.error') || 'Error loading data');
+        }
+      } catch {
+        setError(t('common.error') || 'Failed to load merchants');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadMerchants();
+  }, [t]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -94,7 +93,7 @@ export default function AdminDashboard() {
         <PageHeader title={t('admin.dashboard') || 'لوحة التحكم'} description={t('byJadCloud') || 'مرحباً بك في لوحة تحكم JAD CLOUD'} />
         <Card className="p-12 text-center">
           <p className="text-red-600">{error}</p>
-          <Button variant="outline" className="mt-4" onClick={fetchMerchants}>{t('common.loading') || 'إعادة المحاولة'}</Button>
+          <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>{t('common.retry') || 'إعادة المحاولة'}</Button>
         </Card>
       </div>
     );

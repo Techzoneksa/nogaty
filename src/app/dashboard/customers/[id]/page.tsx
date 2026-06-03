@@ -14,6 +14,19 @@ interface CustomerDetailsProps {
   params: Promise<{ id: string }>;
 }
 
+interface MockCustomer {
+  name: string;
+  phone: string;
+  points: number;
+  visits: number;
+  lastVisit: string;
+  branch: string;
+  status: "active" | "inactive";
+  tier: "Bronze" | "Silver" | "Gold" | "VIP";
+  email: string;
+  dateJoined: string;
+}
+
 export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
   const resolvedParams = use(params);
   const customerId = resolvedParams.id;
@@ -23,9 +36,8 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
   const [pointsAction, setPointsAction] = useState<"add" | "deduct">("add");
   const [pointsAmount, setPointsAmount] = useState("50");
   const [pointsReason, setPointsReason] = useState("شراء وجبة عائلية");
-  
-  // Mock Customer list
-  const mockCustomers: Record<string, any> = {
+
+  const mockCustomers: Record<string, MockCustomer> = {
     "1": { name: "محمد العتيبي", phone: "0501234567", points: 420, visits: 24, lastVisit: "2026-06-01", branch: "العليا", status: "active", tier: "Gold", email: "m.otaibi@example.com", dateJoined: "2025-10-12" },
     "2": { name: "سارة أحمد صالح", phone: "0567890123", points: 150, visits: 8, lastVisit: "2026-05-30", branch: "التخصصي", status: "active", tier: "Silver", email: "sara.saleh@example.com", dateJoined: "2026-02-14" },
     "3": { name: "عبد العزيز الرويلي", phone: "0543210987", points: 890, visits: 45, lastVisit: "2026-06-02", branch: "العليا", status: "active", tier: "VIP", email: "a.ruwaili@example.com", dateJoined: "2025-01-20" },
@@ -162,7 +174,7 @@ export default function CustomerDetailsPage({ params }: CustomerDetailsProps) {
               <div className="flex flex-col text-right gap-0.5">
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-bold text-text-primary">{customer.name}</h2>
-                  <Badge variant={tierVariants[customer.tier] as any}>
+                  <Badge variant={tierVariants[customer.tier] as "neutral" | "secondary" | "accent" | "danger"}>
                     مستوى {customer.tier}
                   </Badge>
                 </div>

@@ -105,7 +105,7 @@ export default function CustomersPage() {
       header: "مستوى العميل",
       accessor: (row: Customer) => {
         const variants = { Bronze: "neutral", Silver: "secondary", Gold: "accent", VIP: "danger" };
-        return <Badge variant={variants[row.tier] as any}>{row.tier}</Badge>;
+        return <Badge variant={variants[row.tier] as "neutral" | "secondary" | "accent" | "danger"}>{row.tier}</Badge>;
       },
     },
     {
@@ -215,7 +215,7 @@ export default function CustomersPage() {
                       <Badge variant={cust.status === "active" ? "success" : "danger"}>
                         {cust.status === "active" ? "نشط" : "خامل"}
                       </Badge>
-                      <Badge variant={variants[cust.tier] as any}>
+                      <Badge variant={variants[cust.tier] as "neutral" | "secondary" | "accent" | "danger"}>
                         {cust.tier}
                       </Badge>
                     </div>

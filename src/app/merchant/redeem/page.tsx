@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
@@ -32,7 +32,6 @@ export default function RedeemPointsPage() {
   const [pointsToRedeem, setPointsToRedeem] = useState("");
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isRedeeming, setIsRedeeming] = useState(false);
@@ -43,50 +42,43 @@ export default function RedeemPointsPage() {
   const discountValue = pointsToRedeem ? (parseInt(pointsToRedeem) * pointValue).toFixed(2) : "0.00";
   const hasInsufficientBalance = selectedCustomer && pointsToRedeem && parseInt(pointsToRedeem) > selectedCustomer.totalPoints;
 
-  const fetchCustomers = useCallback(async () => {
-    try {
-      const response = await fetch("/api/merchant/customers");
-      if (response.ok) {
-        const data = await response.json();
-        setCustomers(data.customers || []);
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        const response = await fetch("/api/merchant/customers");
+        if (response.ok) {
+          const data = await response.json();
+          setCustomers(data.customers || []);
+        }
+      } catch {
       }
-    } catch {
-    }
+    };
+    const loadRewards = async () => {
+      try {
+        const response = await fetch("/api/merchant/rewards");
+        if (response.ok) {
+          const data = await response.json();
+          setRewards(data.rewards || []);
+        }
+      } catch {
+      }
+    };
+    loadCustomers();
+    loadRewards();
   }, []);
 
-  const fetchRewards = useCallback(async () => {
-    try {
-      const response = await fetch("/api/merchant/rewards");
-      if (response.ok) {
-        const data = await response.json();
-        setRewards(data.rewards || []);
-      }
-    } catch {
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCustomers();
-    fetchRewards();
-  }, [fetchCustomers, fetchRewards]);
-
-  useEffect(() => {
-    if (searchQuery.length >= 2) {
-      const filtered = customers.filter(
-        (c) =>
-          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.phone.includes(searchQuery)
-      );
-      setFilteredCustomers(filtered);
-    } else {
-      setFilteredCustomers([]);
-    }
+  const filteredCustomers = useMemo(() => {
+    if (searchQuery.length < 2) return [];
+    return customers.filter(
+      (c) =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.phone.includes(searchQuery)
+    );
   }, [searchQuery, customers]);
 
   const handleSelectCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
     setSearchQuery(customer.phone);
-    setFilteredCustomers([]);
     setError(null);
     setSuccess(null);
   };

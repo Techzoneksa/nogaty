@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
-import { useMemo } from "react";
+import { useState } from "react";
 
 export default function BarcodePage() {
-  const barcodePattern = useMemo(() =>
-    Array.from({ length: 25 }).map(() => Math.random() > 0.4),
-    []
+  const [barcodePattern] = useState<boolean[]>(() =>
+    Array.from({ length: 25 }, () => Math.random() > 0.4)
   );
 
   return (

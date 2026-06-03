@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
@@ -32,7 +32,6 @@ export default function AddPointsPage() {
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [note, setNote] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,10 +39,13 @@ export default function AddPointsPage() {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState({ totalEarned: 0, totalRedeemed: 0, count: 0 });
 
-  const fetchTransactions = useCallback(async () => {
+  const mountedRef = useRef(true);
+
+  const loadTransactions = async () => {
+    if (!mountedRef.current) return;
     try {
       const response = await fetch("/api/merchant/points/history?limit=10");
-      if (response.ok) {
+      if (response.ok && mountedRef.current) {
         const data = await response.json();
         setRecentTransactions(data.transactions || []);
 
@@ -63,41 +65,39 @@ export default function AddPointsPage() {
       }
     } catch {
     }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(loadTransactions, 0);
+    return () => { clearTimeout(timer); mountedRef.current = false; };
   }, []);
 
-  const fetchCustomers = useCallback(async () => {
-    try {
-      const response = await fetch("/api/merchant/customers");
-      if (response.ok) {
-        const data = await response.json();
-        setCustomers(data.customers || []);
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        const response = await fetch("/api/merchant/customers");
+        if (response.ok) {
+          const data = await response.json();
+          setCustomers(data.customers || []);
+        }
+      } catch {
       }
-    } catch {
-    }
+    };
+    loadCustomers();
   }, []);
 
-  useEffect(() => {
-    fetchCustomers();
-    fetchTransactions();
-  }, [fetchCustomers, fetchTransactions]);
-
-  useEffect(() => {
-    if (searchQuery.length >= 2) {
-      const filtered = customers.filter(
-        (c) =>
-          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          c.phone.includes(searchQuery)
-      );
-      setFilteredCustomers(filtered);
-    } else {
-      setFilteredCustomers([]);
-    }
+  const filteredCustomers = useMemo(() => {
+    if (searchQuery.length < 2) return [];
+    return customers.filter(
+      (c) =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.phone.includes(searchQuery)
+    );
   }, [searchQuery, customers]);
 
   const handleSelectCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
     setSearchQuery(customer.phone);
-    setFilteredCustomers([]);
     setError(null);
   };
 
@@ -158,7 +158,7 @@ export default function AddPointsPage() {
             prev ? { ...prev, totalPoints: data.customer.totalPoints } : null
           );
         }
-        fetchTransactions();
+        loadTransactions();
       } else {
         const data = await response.json();
         setError(data.error || t("merchant.pointsAddError") || "Failed to add points");

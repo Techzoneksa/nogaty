@@ -62,7 +62,7 @@ export default function DashboardRewardsPage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-text-primary">{reward.name}</span>
-                  <Badge variant={getTypeColor(reward.type) as any} className="text-[10px] w-fit">{getTypeLabel(reward.type)}</Badge>
+                  <Badge variant={getTypeColor(reward.type) as "primary" | "secondary" | "accent"} className="text-[10px] w-fit">{getTypeLabel(reward.type)}</Badge>
                 </div>
               </div>
               <Badge variant={reward.status === "active" ? "success" : "neutral"} className="text-[10px]">

@@ -42,58 +42,56 @@ export default function HistoryPage() {
     { id: "redeem", label: t("merchant.redeemPointsAction") || "استبدال" },
   ];
 
-  const fetchTransactions = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      let url = `/api/merchant/points/history?page=${page}&limit=20`;
-      if (searchQuery) {
-        url += `&search=${encodeURIComponent(searchQuery)}`;
-      }
-      if (activeTab === "add") {
-        url += "&type=EARN";
-      } else if (activeTab === "redeem") {
-        url += "&type=REDEEM";
-      }
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        let url = `/api/merchant/points/history?page=${page}&limit=20`;
+        if (searchQuery) {
+          url += `&search=${encodeURIComponent(searchQuery)}`;
+        }
+        if (activeTab === "add") {
+          url += "&type=EARN";
+        } else if (activeTab === "redeem") {
+          url += "&type=REDEEM";
+        }
 
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setTransactions(data.transactions || []);
-        setTotalPages(data.pagination?.totalPages || 1);
-      } else {
-        const data = await response.json();
-        setError(data.error || t("common.error") || "Error loading transactions");
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setTransactions(data.transactions || []);
+          setTotalPages(data.pagination?.totalPages || 1);
+        } else {
+          const errData = await response.json();
+          setError(errData.error || t("common.error") || "Error loading transactions");
+        }
+      } catch {
+        setError(t("common.error") || "Failed to load transactions");
+      } finally {
+        setIsLoading(false);
       }
-    } catch {
-      setError(t("common.error") || "Failed to load transactions");
-    } finally {
-      setIsLoading(false);
-    }
+    };
+    loadData();
   }, [page, searchQuery, activeTab, t]);
 
-  const fetchCustomers = useCallback(async () => {
-    try {
-      const response = await fetch("/api/merchant/customers");
-      if (response.ok) {
-        const data = await response.json();
-        const customerMap: Record<string, Customer> = {};
-        data.customers?.forEach((c: Customer) => {
-          customerMap[c.id] = c;
-        });
-        setCustomers(customerMap);
+  useEffect(() => {
+    const loadCustomers = async () => {
+      try {
+        const response = await fetch("/api/merchant/customers");
+        if (response.ok) {
+          const data = await response.json();
+          const customerMap: Record<string, Customer> = {};
+          data.customers?.forEach((c: Customer) => {
+            customerMap[c.id] = c;
+          });
+          setCustomers(customerMap);
+        }
+      } catch {
       }
-    } catch {
-    }
+    };
+    loadCustomers();
   }, []);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
-
-  useEffect(() => {
-    fetchCustomers();
-  }, [fetchCustomers]);
 
   const getCustomerName = (customerId: string) => {
     return customers[customerId]?.name || customerId;

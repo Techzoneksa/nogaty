@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
@@ -43,31 +43,30 @@ export default function MerchantDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(true);
 
-  const fetchMerchant = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`/api/admin/merchants/${params.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setMerchant(data.merchant);
-        setIsActive(data.merchant.status === 'active');
-      } else if (response.status === 404) {
-        setError(t('merchant.notFound') || 'التاجر غير موجود');
-      } else {
-        const data = await response.json();
-        setError(data.error || t('common.error') || 'Error loading merchant');
-      }
-    } catch {
-      setError(t('common.error') || 'Failed to load merchant');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params.id, t]);
-
   useEffect(() => {
-    fetchMerchant();
-  }, [fetchMerchant]);
+    const loadMerchant = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/admin/merchants/${params.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMerchant(data.merchant);
+          setIsActive(data.merchant.status === 'active');
+        } else if (response.status === 404) {
+          setError(t('merchant.notFound') || 'التاجر غير موجود');
+        } else {
+          const errData = await response.json();
+          setError(errData.error || t('common.error') || 'Error loading merchant');
+        }
+      } catch {
+        setError(t('common.error') || 'Failed to load merchant');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadMerchant();
+  }, [params.id, t]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {

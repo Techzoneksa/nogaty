@@ -70,7 +70,7 @@ export default function DashboardIntegrationsPage() {
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-border-base">
-              <Badge variant={getStatusVariant(integration.status) as any}>
+              <Badge variant={getStatusVariant(integration.status) as "success" | "neutral" | "warning"}>
                 {getStatusLabel(integration.status)}
               </Badge>
               <Button variant="outline" size="sm" disabled>

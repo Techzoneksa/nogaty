@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 type Language = "ar" | "en";
 type Direction = "rtl" | "ltr";
@@ -22,13 +22,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
     return "ar";
   });
-
-  useEffect(() => {
-    const saved = localStorage.getItem("nogaty-language") as Language;
-    if (saved && saved !== language) {
-      setLanguageState(saved);
-    }
-  }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

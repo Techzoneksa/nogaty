@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
@@ -40,35 +40,34 @@ export default function MerchantsPage() {
     { value: 'expired', label: t('status.expired') || 'منتهي' },
   ];
 
-  const fetchMerchants = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      let url = '/api/admin/merchants?limit=50';
-      if (search) {
-        url += `&search=${encodeURIComponent(search)}`;
-      }
-      if (statusFilter && statusFilter !== 'all') {
-        url += `&status=${encodeURIComponent(statusFilter)}`;
-      }
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setMerchants(data.merchants || []);
-      } else {
-        const data = await response.json();
-        setError(data.error || t('common.error') || 'Error loading merchants');
-      }
-    } catch {
-      setError(t('common.error') || 'Failed to load merchants');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [search, statusFilter, t]);
-
   useEffect(() => {
-    fetchMerchants();
-  }, [fetchMerchants]);
+    const loadMerchants = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        let url = '/api/admin/merchants?limit=50';
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+        if (statusFilter && statusFilter !== 'all') {
+          url += `&status=${encodeURIComponent(statusFilter)}`;
+        }
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          setMerchants(data.merchants || []);
+        } else {
+          const errData = await response.json();
+          setError(errData.error || t('common.error') || 'Error loading merchants');
+        }
+      } catch {
+        setError(t('common.error') || 'Failed to load merchants');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadMerchants();
+  }, [search, statusFilter, t]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -107,7 +106,6 @@ export default function MerchantsPage() {
               placeholder={t('admin.searchMerchant') || 'ابحث بالاسم أو رقم الهاتف...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={() => fetchMerchants()}
               icon={
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -131,7 +129,7 @@ export default function MerchantsPage() {
         ) : error ? (
           <div className="flex flex-col items-center justify-center p-12">
             <p className="text-red-600 mb-4">{error}</p>
-            <Button variant="outline" onClick={fetchMerchants}>{t('common.loading') || 'إعادة المحاولة'}</Button>
+            <Button variant="outline" onClick={() => window.location.reload()}>{t('common.retry') || 'إعادة المحاولة'}</Button>
           </div>
         ) : merchants.length === 0 ? (
           <EmptyState
