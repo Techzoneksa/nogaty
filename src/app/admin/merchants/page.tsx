@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
@@ -11,44 +11,75 @@ import { EmptyState } from '@/components/EmptyState';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 import Link from 'next/link';
 
-const merchants = [
-  { id: 1, name: 'مقهى النخبة', type: 'مطعم', city: 'الرياض', owner: 'خالد العتيبي', phone: '0501234567', package: 'احترافية', status: 'نشط', customers: 245, joinDate: '2024-01-15' },
-  { id: 2, name: 'سوبرماركت الشاطئ', type: 'متجر', city: 'جدة', owner: 'محمد الأحمد', phone: '0509876543', package: 'أساسية', status: 'نشط', customers: 180, joinDate: '2024-02-20' },
-  { id: 3, name: 'صالون الأناقة', type: 'جمال', city: 'الدمام', owner: 'سارة القحطاني', phone: '0553456789', package: 'متقدمة', status: 'تجربة', customers: 85, joinDate: '2024-03-10' },
-  { id: 4, name: 'متجر التقنية', type: 'إلكترونيات', city: 'الرياض', owner: 'عبدالله السعيد', phone: '0502345678', package: 'احترافية', status: 'نشط', customers: 320, joinDate: '2023-11-05' },
-  { id: 5, name: 'مطعم Heritage', type: 'مطعم', city: 'الرياض', owner: 'ناصر العنزي', phone: '0508765432', package: 'متقدمة', status: 'موقوف', customers: 95, joinDate: '2023-12-01' },
-  { id: 6, name: 'مخبز النجاح', type: 'مطعم', city: 'مكة', owner: 'أحمد الزهراني', phone: '0504567890', package: 'أساسية', status: 'منتهي', customers: 45, joinDate: '2023-06-15' },
-];
+interface Merchant {
+  id: string;
+  name: string;
+  type: string;
+  city: string;
+  owner: string;
+  phone: string;
+  package: string;
+  status: "active" | "trial" | "suspended" | "expired";
+  customers: number;
+  joinDate: string;
+}
 
 export default function MerchantsPage() {
   const { t } = useTranslation();
+  const [merchants, setMerchants] = useState<Merchant[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('الكل');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const statusOptions = [
-    { value: 'الكل', label: 'الكل' },
-    { value: 'نشط', label: 'نشط' },
-    { value: 'تجربة', label: 'تجربة' },
-    { value: 'موقوف', label: 'موقوف' },
-    { value: 'منتهي', label: 'منتهي' },
+    { value: 'all', label: t('common.all') || 'الكل' },
+    { value: 'active', label: t('status.active') || 'نشط' },
+    { value: 'trial', label: t('status.trial') || 'تجربة' },
+    { value: 'suspended', label: t('status.suspended') || 'موقوف' },
+    { value: 'expired', label: t('status.expired') || 'منتهي' },
   ];
 
-  const filteredMerchants = merchants.filter((merchant) => {
-    const matchesSearch = merchant.name.includes(search) || merchant.phone.includes(search);
-    const matchesStatus = statusFilter === 'الكل' || merchant.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const fetchMerchants = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      let url = '/api/admin/merchants?limit=50';
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
+      if (statusFilter && statusFilter !== 'all') {
+        url += `&status=${encodeURIComponent(statusFilter)}`;
+      }
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        setMerchants(data.merchants || []);
+      } else {
+        const data = await response.json();
+        setError(data.error || t('common.error') || 'Error loading merchants');
+      }
+    } catch {
+      setError(t('common.error') || 'Failed to load merchants');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [search, statusFilter, t]);
+
+  useEffect(() => {
+    fetchMerchants();
+  }, [fetchMerchants]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'نشط':
-        return <Badge variant="success">{status}</Badge>;
-      case 'تجربة':
-        return <Badge variant="warning">{status}</Badge>;
-      case 'موقوف':
-        return <Badge variant="danger">{status}</Badge>;
-      case 'منتهي':
-        return <Badge variant="neutral">{status}</Badge>;
+      case 'active':
+        return <Badge variant="success">{t('status.active') || 'نشط'}</Badge>;
+      case 'trial':
+        return <Badge variant="warning">{t('status.trial') || 'تجربة'}</Badge>;
+      case 'suspended':
+        return <Badge variant="danger">{t('status.suspended') || 'موقوف'}</Badge>;
+      case 'expired':
+        return <Badge variant="neutral">{t('status.expired') || 'منتهي'}</Badge>;
       default:
         return <Badge variant="neutral">{status}</Badge>;
     }
@@ -57,14 +88,14 @@ export default function MerchantsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="التجار"
-        description="إدارة والتجار والمتاجر المسجلة في النظام"
+        title={t('admin.merchants') || 'التجار'}
+        description={t('admin.manageMerchants') || 'إدارة والتجار والمتاجر المسجلة في النظام'}
         action={
           <Button variant="primary" size="sm">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            إضافة تاجر
+            {t('admin.addMerchant') || 'إضافة تاجر'}
           </Button>
         }
       />
@@ -73,9 +104,10 @@ export default function MerchantsPage() {
         <div className="flex flex-col md:flex-row gap-3 mb-4">
           <div className="flex-1">
             <Input
-              placeholder="ابحث بالاسم أو رقم الهاتف..."
+              placeholder={t('admin.searchMerchant') || 'ابحث بالاسم أو رقم الهاتف...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={() => fetchMerchants()}
               icon={
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -92,28 +124,37 @@ export default function MerchantsPage() {
           </div>
         </div>
 
-        {filteredMerchants.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center p-12">
+            <span className="text-text-secondary">{t('common.loading') || 'جاري التحميل...'}</span>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center p-12">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button variant="outline" onClick={fetchMerchants}>{t('common.loading') || 'إعادة المحاولة'}</Button>
+          </div>
+        ) : merchants.length === 0 ? (
           <EmptyState
-            title="لا توجد نتائج"
-            description="لم يتم العثور على تجار يطابقون معايير البحث"
+            title={t('empty.noResults') || 'لا توجد نتائج'}
+            description={t('empty.noMerchantsFound') || 'لم يتم العثور على تجار يطابقون معايير البحث'}
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="border-b border-border-base">
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">الاسم</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden sm:table-cell">النوع</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden md:table-cell">المدينة</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden lg:table-cell">المالك</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">الباقة</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">الحالة</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden xl:table-cell">العملاء</th>
-                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">الإجراءات</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">{t('merchant.name') || 'الاسم'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden sm:table-cell">{t('merchant.type') || 'النوع'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden md:table-cell">{t('merchant.city') || 'المدينة'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden lg:table-cell">{t('admin.owner') || 'المالك'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">{t('merchant.package') || 'الباقة'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">{t('merchant.status') || 'الحالة'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2 hidden xl:table-cell">{t('merchant.customers') || 'العملاء'}</th>
+                  <th className="text-right text-xs font-semibold text-text-secondary pb-3 px-2">{t('admin.action') || 'الإجراءات'}</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredMerchants.map((merchant) => (
+                {merchants.map((merchant) => (
                   <tr key={merchant.id} className="border-b border-border-base/50 last:border-0">
                     <td className="py-3 px-2">
                       <div>
@@ -157,7 +198,7 @@ export default function MerchantsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </Button>
-                        {merchant.status !== 'موقوف' && (
+                        {merchant.status !== 'suspended' && (
                           <Button variant="danger" size="sm">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />

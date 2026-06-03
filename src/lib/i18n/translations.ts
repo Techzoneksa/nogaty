@@ -246,6 +246,16 @@ export const translations = {
       usageRate: "نسبة الاستخدام",
       activeBranches: "الفروع النشطة",
       repeatRate: "معدل التكرار",
+      manageMerchants: "إدارة والتجار والمتاجر المسجلة في النظام",
+      addMerchant: "إضافة تاجر",
+      viewAll: "عرض الكل",
+      owner: "المالك",
+      addPackage: "إضافة باقة",
+      searchPackage: "ابحث عن باقة...",
+      subscriptionsDesc: "إدارة وتتبع اشتراكات التجار",
+      branches: "الفروع",
+      extend: "تمديد",
+      cancel: "إلغاء",
     },
 
     merchant: {
@@ -433,6 +443,8 @@ export const translations = {
       success: "نجاح",
       error: "خطأ",
       warning: "تحذير",
+      retry: "إعادة المحاولة",
+      all: "الكل",
     },
 
     empty: {
@@ -445,6 +457,13 @@ export const translations = {
       addFirstBanner: "أضف أول بنر",
       noNews: "لا توجد منتجات جديدة",
       addFirstNews: "أضف أول منتج/خبر",
+      noMerchants: "لا توجد تجار",
+      noMerchantsFound: "لم يتم العثور على تجار يطابقون معايير البحث",
+      noResults: "لا توجد نتائج",
+      noPackages: "لا توجد باقات",
+      noPackagesFound: "لم يتم العثور على باقات يطابقون معايير البحث",
+      noSubscriptions: "لا توجد اشتراكات",
+      noSubscriptionsFound: "لم يتم العثور على اشتراكات يطابقون معايير البحث",
     },
 
     errors: {
@@ -460,6 +479,8 @@ export const translations = {
       inactive: "غير نشط",
       suspended: "موقوف",
       expired: "منتهي",
+      trial: "تجربة",
+      cancelled: "ملغي",
     },
 
     customerLevels: {
@@ -717,6 +738,16 @@ export const translations = {
       usageRate: "Usage Rate",
       activeBranches: "Active Branches",
       repeatRate: "Repeat Rate",
+      manageMerchants: "Manage registered merchants and businesses in the system",
+      addMerchant: "Add Merchant",
+      viewAll: "View All",
+      owner: "Owner",
+      addPackage: "Add Package",
+      searchPackage: "Search package...",
+      subscriptionsDesc: "Manage and track merchant subscriptions",
+      branches: "Branches",
+      extend: "Extend",
+      cancel: "Cancel",
     },
 
     merchant: {
@@ -899,6 +930,8 @@ export const translations = {
       success: "Success",
       error: "Error",
       warning: "Warning",
+      retry: "Retry",
+      all: "All",
     },
 
     empty: {
@@ -911,6 +944,13 @@ export const translations = {
       addFirstBanner: "Add first banner",
       noNews: "No new products",
       addFirstNews: "Add first product/news",
+      noMerchants: "No merchants",
+      noMerchantsFound: "No merchants found matching your criteria",
+      noResults: "No results",
+      noPackages: "No packages",
+      noPackagesFound: "No packages found matching your criteria",
+      noSubscriptions: "No subscriptions",
+      noSubscriptionsFound: "No subscriptions found matching your criteria",
     },
 
     errors: {
@@ -926,6 +966,8 @@ export const translations = {
       inactive: "Inactive",
       suspended: "Suspended",
       expired: "Expired",
+      trial: "Trial",
+      cancelled: "Cancelled",
     },
 
     customerLevels: {

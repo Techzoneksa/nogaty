@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
@@ -9,15 +9,44 @@ import { PageHeader } from '@/components/PageHeader';
 import { EmptyState } from '@/components/EmptyState';
 import { useTranslation } from '@/lib/i18n/useTranslation';
 
-const packages = [
-  { id: 1, name: 'أساسية', price: 99, customerLimit: 100, branchesLimit: 1, features: ['برنامج نقاط الولاء', 'تقرير أساسي', 'دعم عبر البريد'], active: true },
-  { id: 2, name: 'احترافية', price: 249, customerLimit: 500, branchesLimit: 3, features: ['كل مميزات الأساسية', 'تقرير متقدم', 'دعم عبر الهاتف', 'API مخصص'], active: true },
-  { id: 3, name: 'متقدمة', price: 499, customerLimit: 1000, branchesLimit: 10, features: ['كل مميزات الاحترافية', 'تقرير شامل', 'دعم 24/7', 'تكامل غير محدود', 'أولوية الإطلاق'], active: true },
-];
+interface Package {
+  id: string;
+  name: string;
+  price: number;
+  customerLimit: number;
+  branchesLimit: number;
+  features: string[];
+  active: boolean;
+}
 
 export default function PackagesPage() {
   const { t } = useTranslation();
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const loadPackages = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/admin/packages');
+        if (response.ok) {
+          const data = await response.json();
+          setPackages(data.packages || []);
+        } else {
+          const errData = await response.json();
+          setError(errData.error || t('common.error') || 'Error loading packages');
+        }
+      } catch {
+        setError(t('common.error') || 'Failed to load packages');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadPackages();
+  }, [t]);
 
   const filteredPackages = packages.filter((pkg) =>
     pkg.name.includes(search)
@@ -26,21 +55,21 @@ export default function PackagesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="الباقات"
-        description="إدارة باقات الاشتراك والتسعير"
+        title={t('admin.packages') || 'الباقات'}
+        description={t('pricing.title') || 'إدارة باقات الاشتراك والتسعير'}
         action={
           <Button variant="primary" size="sm">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            إضافة باقة
+            {t('admin.addPackage') || 'إضافة باقة'}
           </Button>
         }
       />
 
       <div className="mb-4">
         <Input
-          placeholder="ابحث عن باقة..."
+          placeholder={t('admin.searchPackage') || 'ابحث عن باقة...'}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           icon={
@@ -51,10 +80,23 @@ export default function PackagesPage() {
         />
       </div>
 
-      {filteredPackages.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse h-64 bg-bg-base" />
+          ))}
+        </div>
+      ) : error ? (
+        <Card className="p-12 text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            {t('common.retry') || 'إعادة المحاولة'}
+          </Button>
+        </Card>
+      ) : filteredPackages.length === 0 ? (
         <EmptyState
-          title="لا توجد باقات"
-          description="لم يتم العثور على باقات يطابقون معايير البحث"
+          title={t('empty.noPackages') || 'لا توجد باقات'}
+          description={t('empty.noPackagesFound') || 'لم يتم العثور على باقات يطابقون معايير البحث'}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -65,27 +107,27 @@ export default function PackagesPage() {
                   <h3 className="text-lg font-bold text-text-primary">{pkg.name}</h3>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-2xl font-extrabold text-primary">{pkg.price}</span>
-                    <span className="text-sm text-text-secondary">ر.س/شهر</span>
+                    <span className="text-sm text-text-secondary">{t('sar') || 'ر.س'}/ {t('perMonth') || 'شهر'}</span>
                   </div>
                 </div>
                 <Badge variant={pkg.active ? 'success' : 'neutral'}>
-                  {pkg.active ? 'نشط' : 'غير نشط'}
+                  {pkg.active ? (t('status.active') || 'نشط') : (t('status.inactive') || 'غير نشط')}
                 </Badge>
               </div>
 
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between py-2 border-b border-border-base/50">
-                  <span className="text-sm text-text-secondary">العملاء</span>
+                  <span className="text-sm text-text-secondary">{t('admin.customers') || 'العملاء'}</span>
                   <span className="text-sm font-semibold text-text-primary">{pkg.customerLimit}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border-base/50">
-                  <span className="text-sm text-text-secondary">الفروع</span>
+                  <span className="text-sm text-text-secondary">{t('admin.branches') || 'الفروع'}</span>
                   <span className="text-sm font-semibold text-text-primary">{pkg.branchesLimit}</span>
                 </div>
               </div>
 
               <div className="mb-4">
-                <p className="text-xs font-semibold text-text-secondary mb-2">المميزات:</p>
+                <p className="text-xs font-semibold text-text-secondary mb-2">{t('features') || 'المميزات'}:</p>
                 <ul className="space-y-1">
                   {pkg.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-2 text-sm text-text-primary">
@@ -103,7 +145,7 @@ export default function PackagesPage() {
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  تعديل
+                  {t('common.edit') || 'تعديل'}
                 </Button>
                 <Button variant="danger" size="sm">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
