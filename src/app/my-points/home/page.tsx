@@ -4,8 +4,11 @@ import Link from "next/link";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import BottomNav from "@/components/my-points/BottomNav";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-bg-base pb-20">
       <div className="bg-gradient-to-br from-primary via-primary-light to-secondary px-6 pt-12 pb-24 rounded-b-3xl">
@@ -21,8 +24,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div className="text-white">
-              <p className="text-white/80 text-sm">أهلاً بعودتك</p>
-              <h1 className="text-xl font-bold">يا أحمد</h1>
+              <p className="text-white/80 text-sm">{t("myPoints.welcomeBack")}</p>
+              <h1 className="text-xl font-bold">{t("myPoints.greetingName")}</h1>
             </div>
           </div>
           <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -46,8 +49,8 @@ export default function HomePage() {
                 <span className="text-3xl font-black text-accent">2450</span>
               </div>
               <div className="flex-1">
-                <p className="text-text-secondary text-sm">رصيد نقاطك الحالي</p>
-                <p className="text-text-primary font-bold">نقطة</p>
+                <p className="text-text-secondary text-sm">{t("myPoints.currentBalance")}</p>
+                <p className="text-text-primary font-bold">{t("points")}</p>
               </div>
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                 <svg
@@ -84,7 +87,7 @@ export default function HomePage() {
                     <rect x="14" y="14" width="7" height="7" />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-text-primary">الباركود</span>
+                <span className="text-xs font-bold text-text-primary">{t("myPoints.barcode")}</span>
               </div>
             </Card>
           </Link>
@@ -103,7 +106,7 @@ export default function HomePage() {
                     <circle cx="12" cy="12" r="10" />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-text-primary">سجل النقاط</span>
+                <span className="text-xs font-bold text-text-primary">{t("myPoints.history")}</span>
               </div>
             </Card>
           </Link>
@@ -122,7 +125,7 @@ export default function HomePage() {
                     <path d="M2 12h20" />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-text-primary">العروض</span>
+                <span className="text-xs font-bold text-text-primary">{t("myPoints.offers")}</span>
               </div>
             </Card>
           </Link>
@@ -143,8 +146,8 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="text-text-primary font-bold">المنتجات الجديدة</p>
-                <p className="text-text-secondary text-sm">اكتشف آخر الإصدارات</p>
+                <p className="text-text-primary font-bold">{t("myPoints.newProducts")}</p>
+                <p className="text-text-secondary text-sm">{t("myPoints.discoverNew")}</p>
               </div>
               <svg
                 viewBox="0 0 24 24"
@@ -172,8 +175,8 @@ export default function HomePage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="text-white font-bold">متجر النموذج</p>
-                <p className="text-white/80 text-sm">عرض معلومات المتجر</p>
+                <p className="text-white font-bold">{t("myPoints.storeName")}</p>
+                <p className="text-white/80 text-sm">{t("myPoints.viewStoreInfo")}</p>
               </div>
               <svg
                 viewBox="0 0 24 24"

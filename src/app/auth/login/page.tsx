@@ -33,27 +33,26 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "حدث خطأ أثناء تسجيل الدخول");
+        setError(data.error || t("common.error"));
         setIsLoading(false);
         return;
       }
 
-      // Redirect based on role
       router.push(data.redirectUrl || "/");
       router.refresh();
     } catch {
-      setError("حدث خطأ في الاتصال بالخادم");
+      setError(t("common.error"));
       setIsLoading(false);
     }
   };
 
   const handlePhoneLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("تسجيل الدخول عبر رقم الجوال غير متاح حالياً");
+    setError(t("auth.phoneNotAvailable"));
   };
 
   return (
-    <div className="min-h-screen bg-bg-base flex items-center justify-center p-4" dir="rtl">
+    <div className="min-h-screen bg-bg-base flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
           <LanguageToggle />
@@ -61,10 +60,10 @@ export default function LoginPage() {
 
         <Card className="p-6">
           <h1 className="text-2xl font-bold text-text-primary text-center mb-2">
-            تسجيل الدخول
+            {t("auth.login")}
           </h1>
           <p className="text-sm text-text-secondary text-center mb-6">
-            مرحباً بك في نظام nogaty
+            {t("auth.welcomeMessage")}
           </p>
 
           {error && (
@@ -83,7 +82,7 @@ export default function LoginPage() {
                   : "bg-gray-100 text-text-secondary hover:bg-gray-200"
               }`}
             >
-              البريد الإلكتروني
+              {t("auth.email")}
             </button>
             <button
               type="button"
@@ -94,7 +93,7 @@ export default function LoginPage() {
                   : "bg-gray-100 text-text-secondary hover:bg-gray-200"
               }`}
             >
-              رقم الجوال
+              {t("auth.phone")}
             </button>
           </div>
 
@@ -103,7 +102,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                label="البريد الإلكتروني"
+                label={t("auth.email")}
                 placeholder="example@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -112,7 +111,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                label="كلمة المرور"
+                label={t("auth.password")}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -123,18 +122,18 @@ export default function LoginPage() {
                   href="/auth/forgot"
                   className="text-sm text-primary hover:underline"
                 >
-                  نسيت كلمة المرور؟
+                  {t("auth.forgotPassword")}
                 </Link>
               </div>
               <Button type="submit" className="w-full" size="lg" isLoading={isLoading}>
-                تسجيل الدخول
+                {t("auth.login")}
               </Button>
             </form>
           ) : (
             <form onSubmit={handlePhoneLogin} className="space-y-4">
               <div className="w-full flex flex-col gap-1">
                 <label className="text-xs font-semibold text-text-primary">
-                  رقم الجوال
+                  {t("auth.phone")}
                 </label>
                 <div className="relative flex items-center">
                   <span className="absolute right-3 text-text-secondary flex items-center gap-1 pointer-events-none">
@@ -148,11 +147,11 @@ export default function LoginPage() {
                   />
                 </div>
                 <span className="text-xs text-text-secondary">
-                  أدخل رقم الجوال بدون صفر
+                  {t("auth.phoneHint")}
                 </span>
               </div>
               <Button type="submit" className="w-full" size="lg">
-                إرسال رمز التحقق
+                {t("auth.sendCode")}
               </Button>
             </form>
           )}
@@ -164,7 +163,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs">
                 <span className="px-2 bg-card-base text-text-secondary">
-                  أو continue with
+                  {t("auth.orContinueWith")}
                 </span>
               </div>
             </div>
@@ -204,9 +203,9 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-text-secondary mt-6">
-            ليس لديك حساب؟{" "}
+            {t("auth.noAccount")}{" "}
             <Link href="/auth/register" className="text-primary font-medium hover:underline">
-              إنشاء حساب جديد
+              {t("auth.register")}
             </Link>
           </p>
         </Card>
